@@ -571,7 +571,8 @@ export class ServerContext {
       return (
         req: Request,
         params: Record<string, string>,
-        state?: Record<string, unknown>,
+        // deno-lint-ignore no-explicit-any
+        ctx?: any,
         error?: unknown,
       ) => {
         return async (data?: Data, options?: RenderOptions) => {
@@ -583,9 +584,9 @@ export class ServerContext {
             typeof route.component === "function" &&
             route.component.constructor.name === "AsyncFunction"
           ) {
-            throw new Error(
-              "Async components are not supported. Fetch data inside of a route handler, as described in the docs: https://fresh.deno.dev/docs/getting-started/fetching-data",
-            );
+            // @ts-ignore - TODO
+            const res = await route.component(req, ctx);
+            route.component = () => res;
           }
 
           const resp = await internalRender({
@@ -602,7 +603,7 @@ export class ServerContext {
             url: new URL(req.url),
             params,
             data,
-            state,
+            state: ctx?.state,
             error,
           });
 
@@ -649,8 +650,8 @@ export class ServerContext {
             (route.handler as Handler)(req, {
               ...ctx,
               params,
-              render: createRender(req, params, ctx.state),
-              renderNotFound: createUnknownRender(req, params, ctx.state),
+              render: createRender(req, params, ctx),
+              renderNotFound: createUnknownRender(req, params, ctx),
             }),
         };
       } else {
@@ -664,8 +665,8 @@ export class ServerContext {
             handler(req, {
               ...ctx,
               params,
-              render: createRender(req, params, ctx.state),
-              renderNotFound: createUnknownRender(req, params, ctx.state),
+              render: createRender(req, params, ctx),
+              renderNotFound: createUnknownRender(req, params, ctx),
             });
         }
       }
