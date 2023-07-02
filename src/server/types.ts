@@ -1,4 +1,4 @@
-import { ComponentType } from "preact";
+import { ComponentChildren, ComponentType, VNode } from "preact";
 import { ConnInfo, ServeInit } from "./deps.ts";
 import * as router from "./router.ts";
 import { InnerRenderFunction, RenderContext } from "./render.ts";
@@ -113,20 +113,33 @@ export type MultiHandler<T = any, State = Record<string, unknown>> = {
 export type Handlers<T> = MultiHandler<T>;
 
 export interface RouteModule {
-  default?: ComponentType<PageProps>;
+  default?: PageComponent<PageProps>;
   // deno-lint-ignore no-explicit-any
   handler?: Handler<any, any> | MultiHandler<any, any>;
   config?: RouteConfig;
 }
+
+export type PageComponent<T> =
+  | ComponentType<PageProps<T>>
+  | ((
+    req: Request,
+    ctx: HandlerContext<RouterState>,
+  ) => Promise<ComponentChildren | Response>)
+  // deno-lint-ignore no-explicit-any
+  | ((props: any) => VNode<any>);
 
 // deno-lint-ignore no-explicit-any
 export interface Route<Data = any> {
   pattern: string;
   url: string;
   name: string;
-  component?: ComponentType<PageProps<Data>>;
+  component?: PageComponent<Data>;
   handler: Handler<Data> | MultiHandler<Data>;
   csp: boolean;
+}
+
+export interface RouterState {
+  state: Record<string, unknown>;
 }
 
 // --- APP ---
@@ -169,7 +182,7 @@ export type UnknownHandler = (
 ) => Response | Promise<Response>;
 
 export interface UnknownPageModule {
-  default?: ComponentType<UnknownPageProps>;
+  default?: PageComponent<UnknownPageProps>;
   handler?: UnknownHandler;
   config?: RouteConfig;
 }
@@ -178,7 +191,7 @@ export interface UnknownPage {
   pattern: string;
   url: string;
   name: string;
-  component?: ComponentType<UnknownPageProps>;
+  component?: PageComponent<UnknownPageProps>;
   handler: UnknownHandler;
   csp: boolean;
 }
@@ -210,7 +223,7 @@ export type ErrorHandler = (
 ) => Response | Promise<Response>;
 
 export interface ErrorPageModule {
-  default?: ComponentType<ErrorPageProps>;
+  default?: PageComponent<ErrorPageProps>;
   handler?: ErrorHandler;
   config?: RouteConfig;
 }
@@ -219,7 +232,7 @@ export interface ErrorPage {
   pattern: string;
   url: string;
   name: string;
-  component?: ComponentType<ErrorPageProps>;
+  component?: PageComponent<ErrorPageProps>;
   handler: ErrorHandler;
   csp: boolean;
 }
