@@ -1,19 +1,20 @@
-import { ComponentType } from "preact";
+import { ComponentChildren, ComponentType, VNode } from "preact";
 import { ConnInfo, ServeInit } from "./deps.ts";
 import * as router from "./router.ts";
 import { InnerRenderFunction, RenderContext } from "./render.ts";
 
 // --- APPLICATION CONFIGURATION ---
 
-export type StartOptions = ServeInit & FreshOptions & {
-  /**
-   * UNSTABLE: use the `Deno.serve` API as the underlying HTTP server instead of
-   * the `std/http` API. Do not use this in production.
-   *
-   * This option is experimental and may be removed in a future Fresh release.
-   */
-  experimentalDenoServe?: boolean;
-};
+export type StartOptions = ServeInit &
+  FreshOptions & {
+    /**
+     * UNSTABLE: use the `Deno.serve` API as the underlying HTTP server instead of
+     * the `std/http` API. Do not use this in production.
+     *
+     * This option is experimental and may be removed in a future Fresh release.
+     */
+    experimentalDenoServe?: boolean;
+  };
 
 export interface FreshOptions {
   render?: RenderFunction;
@@ -32,7 +33,7 @@ export interface RouterOptions {
 
 export type RenderFunction = (
   ctx: RenderContext,
-  render: InnerRenderFunction,
+  render: InnerRenderFunction
 ) => void | Promise<void>;
 
 /// --- ROUTES ---
@@ -90,7 +91,7 @@ export interface HandlerContext<Data = unknown, State = Record<string, unknown>>
   params: Record<string, string>;
   render: (
     data?: Data,
-    options?: RenderOptions,
+    options?: RenderOptions
   ) => Response | Promise<Response>;
   renderNotFound: (data?: Data) => Response | Promise<Response>;
   state: State;
@@ -99,7 +100,7 @@ export interface HandlerContext<Data = unknown, State = Record<string, unknown>>
 // deno-lint-ignore no-explicit-any
 export type Handler<T = any, State = Record<string, unknown>> = (
   req: Request,
-  ctx: HandlerContext<T, State>,
+  ctx: HandlerContext<T, State>
 ) => Response | Promise<Response>;
 
 // deno-lint-ignore no-explicit-any
@@ -113,20 +114,33 @@ export type Handlers<T = any, State = Record<string, unknown>> = {
 export type MultiHandler<T> = Handlers<T>;
 
 export interface RouteModule {
-  default?: ComponentType<PageProps>;
+  default?: PageComponent<PageProps>;
   // deno-lint-ignore no-explicit-any
   handler?: Handler<any, any> | Handlers<any, any>;
   config?: RouteConfig;
 }
+
+export type PageComponent<T> =
+  | ComponentType<PageProps<T>>
+  | ((
+      req: Request,
+      ctx: HandlerContext<RouterState>
+    ) => Promise<ComponentChildren | Response>)
+  // deno-lint-ignore no-explicit-any
+  | ((props: any) => VNode<any>);
 
 // deno-lint-ignore no-explicit-any
 export interface Route<Data = any> {
   pattern: string;
   url: string;
   name: string;
-  component?: ComponentType<PageProps<Data>>;
+  component?: PageComponent<Data>;
   handler: Handler<Data> | Handlers<Data>;
   csp: boolean;
+}
+
+export interface RouterState {
+  state: Record<string, unknown>;
 }
 
 // --- APP ---
@@ -165,11 +179,11 @@ export interface UnknownHandlerContext<State = Record<string, unknown>>
 
 export type UnknownHandler = (
   req: Request,
-  ctx: UnknownHandlerContext,
+  ctx: UnknownHandlerContext
 ) => Response | Promise<Response>;
 
 export interface UnknownPageModule {
-  default?: ComponentType<UnknownPageProps>;
+  default?: PageComponent<UnknownPageProps>;
   handler?: UnknownHandler;
   config?: RouteConfig;
 }
@@ -178,7 +192,7 @@ export interface UnknownPage {
   pattern: string;
   url: string;
   name: string;
-  component?: ComponentType<UnknownPageProps>;
+  component?: PageComponent<UnknownPageProps>;
   handler: UnknownHandler;
   csp: boolean;
 }
@@ -206,11 +220,11 @@ export interface ErrorHandlerContext<State = Record<string, unknown>>
 
 export type ErrorHandler = (
   req: Request,
-  ctx: ErrorHandlerContext,
+  ctx: ErrorHandlerContext
 ) => Response | Promise<Response>;
 
 export interface ErrorPageModule {
-  default?: ComponentType<ErrorPageProps>;
+  default?: PageComponent<ErrorPageProps>;
   handler?: ErrorHandler;
   config?: RouteConfig;
 }
@@ -219,7 +233,7 @@ export interface ErrorPage {
   pattern: string;
   url: string;
   name: string;
-  component?: ComponentType<ErrorPageProps>;
+  component?: PageComponent<ErrorPageProps>;
   handler: ErrorHandler;
   csp: boolean;
 }
@@ -246,7 +260,7 @@ export interface MiddlewareRoute extends Middleware {
 
 export type MiddlewareHandler<State = Record<string, unknown>> = (
   req: Request,
-  ctx: MiddlewareHandlerContext<State>,
+  ctx: MiddlewareHandlerContext<State>
 ) => Response | Promise<Response>;
 
 // deno-lint-ignore no-explicit-any
