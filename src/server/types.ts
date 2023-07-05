@@ -5,8 +5,10 @@ import { InnerRenderFunction, RenderContext } from "./render.ts";
 
 // --- APPLICATION CONFIGURATION ---
 
-export type StartOptions = ServeInit &
-  FreshOptions & {
+export type StartOptions =
+  & ServeInit
+  & FreshOptions
+  & {
     /**
      * UNSTABLE: use the `Deno.serve` API as the underlying HTTP server instead of
      * the `std/http` API. Do not use this in production.
@@ -33,7 +35,7 @@ export interface RouterOptions {
 
 export type RenderFunction = (
   ctx: RenderContext,
-  render: InnerRenderFunction
+  render: InnerRenderFunction,
 ) => void | Promise<void>;
 
 /// --- ROUTES ---
@@ -65,6 +67,14 @@ export interface PageProps<T = any, S = Record<string, unknown>> {
   state: S;
 }
 
+/** */
+export type RouteContext<T = unknown, S = Record<string, unknown>> =
+  & Omit<
+    HandlerContext<T, S>,
+    "render"
+  >
+  & Omit<PageProps<unknown, S>, "data">;
+
 export interface RouteConfig {
   /**
    * A route override for the page. This is useful for pages where the route
@@ -91,7 +101,7 @@ export interface HandlerContext<Data = unknown, State = Record<string, unknown>>
   params: Record<string, string>;
   render: (
     data?: Data,
-    options?: RenderOptions
+    options?: RenderOptions,
   ) => Response | Promise<Response>;
   renderNotFound: (data?: Data) => Response | Promise<Response>;
   state: State;
@@ -100,7 +110,7 @@ export interface HandlerContext<Data = unknown, State = Record<string, unknown>>
 // deno-lint-ignore no-explicit-any
 export type Handler<T = any, State = Record<string, unknown>> = (
   req: Request,
-  ctx: HandlerContext<T, State>
+  ctx: HandlerContext<T, State>,
 ) => Response | Promise<Response>;
 
 // deno-lint-ignore no-explicit-any
@@ -120,14 +130,15 @@ export interface RouteModule {
   config?: RouteConfig;
 }
 
+export type AsyncRoute<T> = (
+  req: Request,
+  ctx: RouteContext<T>,
+) => Promise<ComponentChildren | Response>;
 export type PageComponent<T> =
   | ComponentType<PageProps<T>>
-  | ((
-      req: Request,
-      ctx: HandlerContext<RouterState>
-    ) => Promise<ComponentChildren | Response>)
+  | AsyncRoute<T>
   // deno-lint-ignore no-explicit-any
-  | ((props: any) => VNode<any>);
+  | ((props: any) => VNode<any> | ComponentChildren);
 
 // deno-lint-ignore no-explicit-any
 export interface Route<Data = any> {
@@ -179,7 +190,7 @@ export interface UnknownHandlerContext<State = Record<string, unknown>>
 
 export type UnknownHandler = (
   req: Request,
-  ctx: UnknownHandlerContext
+  ctx: UnknownHandlerContext,
 ) => Response | Promise<Response>;
 
 export interface UnknownPageModule {
@@ -220,7 +231,7 @@ export interface ErrorHandlerContext<State = Record<string, unknown>>
 
 export type ErrorHandler = (
   req: Request,
-  ctx: ErrorHandlerContext
+  ctx: ErrorHandlerContext,
 ) => Response | Promise<Response>;
 
 export interface ErrorPageModule {
@@ -260,7 +271,7 @@ export interface MiddlewareRoute extends Middleware {
 
 export type MiddlewareHandler<State = Record<string, unknown>> = (
   req: Request,
-  ctx: MiddlewareHandlerContext<State>
+  ctx: MiddlewareHandlerContext<State>,
 ) => Response | Promise<Response>;
 
 // deno-lint-ignore no-explicit-any
