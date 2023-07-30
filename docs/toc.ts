@@ -62,6 +62,10 @@ const toc: RawTableOfContents = {
           ["server-configuration", "Server configuration", "link:latest"],
         ],
       },
+      plugins: {
+        title: "Plugins",
+        link: "canary",
+      },
       integrations: {
         title: "Integrations",
         link: "latest",
