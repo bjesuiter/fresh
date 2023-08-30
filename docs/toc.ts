@@ -58,7 +58,6 @@ const toc: RawTableOfContents = {
           ["data-fetching", "Data fetching", "link:latest"],
           ["ahead-of-time-builds", "Ahead-of-time Builds", "link:latest"],
           ["deployment", "Deployment", "link:latest"],
-          ["plugins", "Plugins", "link:latest"],
           ["updating", "Updating Fresh", "link:latest"],
           ["server-configuration", "Server configuration", "link:latest"],
         ],
@@ -66,6 +65,10 @@ const toc: RawTableOfContents = {
       plugins: {
         title: "Plugins",
         link: "canary",
+        pages: [
+          ["using-twind-v1", "Using Twind v1", "link:canary"],
+          ["creating-a-plugin", "Creating a Plugin", "link:canary"],
+        ],
       },
       integrations: {
         title: "Integrations",
@@ -82,7 +85,6 @@ const toc: RawTableOfContents = {
             "Changing the source directory",
             "link:latest",
           ],
-          ["using-twind-v1", "Using Twind v1", "link:latest"],
           ["init-the-server", "Initializing the server", "link:latest"],
           [
             "using-fresh-canary-version",

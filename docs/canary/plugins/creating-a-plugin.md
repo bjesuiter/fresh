@@ -1,36 +1,6 @@
 ---
-description: Plugins can add new functionality to Fresh without requiring significant complexity.
+description: How to create a plugin for fresh
 ---
-
-Plugins can dynamically add new functionality to Fresh without exposing
-significant complexity to the user. Users can add plugins by importing and
-initializing them in their `main.ts` file:
-
-```ts main.ts
-import { start } from "$fresh/server.ts";
-import manifest from "./fresh.gen.ts";
-
-import twindPlugin from "$fresh/plugins/twind.ts";
-import twindConfig from "./twind.config.js";
-
-await start(manifest, {
-  plugins: [
-    // This line configures Fresh to use the first-party twind plugin.
-    twindPlugin(twindConfig),
-  ],
-});
-```
-
-Currently, the only available first-party plugin is the Twind plugin.
-Third-party plugins are also supported - they can be imported from any HTTP
-server, like any other Deno module.
-
-Plugin hooks are executed in the order that the plugins are defined in the
-`plugins` array. This means that the first plugin in the array will be executed
-first, and the last plugin in the array will be executed last. For many plugins,
-this does not matter, but for some plugins it may.
-
-## Creating a plugin
 
 Fresh plugins are in essence a collection of hooks that allow the plugin to hook
 into various systems inside of Fresh. Currently only a `render` hook is
