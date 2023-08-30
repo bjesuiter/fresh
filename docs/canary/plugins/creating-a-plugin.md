@@ -3,10 +3,9 @@ description: How to create a plugin for fresh
 ---
 
 Fresh plugins are in essence a collection of hooks that allow the plugin to hook
-into various systems inside of Fresh. Currently only a `render` hook is
-available (explained below).
+into various systems inside of Fresh.
 
-A Fresh plugin is just a JavaScript object that conforms to the
+At the core a Fresh plugin is just a JavaScript object that conforms to the
 [Plugin](https://deno.land/x/fresh/server.ts?s=Plugin) interface. The only
 required property of a plugin is its name. Names must only contain the
 characters `a`-`z`, and `_`.
@@ -16,12 +15,23 @@ import { Plugin } from "$fresh/server.ts";
 
 const plugin: Plugin = {
   name: "my_plugin",
+  // entrypoints?: Record<string, string>;
+  // render?(ctx: PluginRenderContext): PluginRenderResult;
+  //   renderAsync?(ctx: PluginAsyncRenderContext): Promise<PluginRenderResult>;
+  //   routes?: PluginRoute[];
+  //   middlewares?: PluginMiddleware<State>[];
 };
 ```
 
 A plugin containing only a name is technically valid, but not very useful. To be
 able to do anything with a plugin, it must register some hooks, middlewares, or
 routes.
+
+> ⚠️ HEADS UP! The format for the plugin definition is currently under discussion
+> to hopefully make plugin support much more powerful, without adding huge
+> support overhead. If you're interested, join
+> [this github issue](https://github.com/denoland/fresh/issues/1602#issuecomment-1686535522)
+> for the discussion.
 
 ### Hook: `render`
 
