@@ -17,9 +17,9 @@ const plugin: Plugin = {
   name: "my_plugin",
   // entrypoints?: Record<string, string>;
   // render?(ctx: PluginRenderContext): PluginRenderResult;
-  //   renderAsync?(ctx: PluginAsyncRenderContext): Promise<PluginRenderResult>;
-  //   routes?: PluginRoute[];
-  //   middlewares?: PluginMiddleware<State>[];
+  // renderAsync?(ctx: PluginAsyncRenderContext): Promise<PluginRenderResult>;
+  // routes?: PluginRoute[];
+  // middlewares?: PluginMiddleware<State>[];
 };
 ```
 
@@ -32,6 +32,35 @@ routes.
 > support overhead. If you're interested, join
 > [this github issue](https://github.com/denoland/fresh/issues/1602#issuecomment-1686535522)
 > for the discussion.
+
+## Taking Options
+
+To take options for your plugin, do not create and export the
+`const plugin = ...` object directly, but a factory function instead which
+returns the plugin object:
+
+```ts
+type YourPluginOptions = {
+  option1: boolean;
+  option2: string;
+  // ...
+};
+
+export async function MyPlugin(options: YourPluginOptions) {
+  // ... validate your options
+  // ... init your plugin
+
+  return {
+    name: "openprops",
+  } satisfies Plugin; // this `satisfies` ensures that your plugin object is correct without tricking the typescript compiler;
+}
+```
+
+> ℹ️ TIP: You could use [zod][zod] to validate the options passed to your plugin,
+> as well as setting defaults. You can go here to see an example:
+> [deno_fresh_openprops][fresh-openprops-plugin-definition]
+
+## Available Hooks
 
 ### Hook: `render`
 
@@ -103,7 +132,19 @@ rendering, plugin `render` hooks, and the
 [`RenderFunction`](https://deno.land/x/fresh/server.ts?s=RenderFunction) that
 may be provided to Fresh's `start` entrypoint in the `main.ts` file.
 
-### Routes and Middlewares
+### Adding Routes
+
+TODO
+
+### Adding Middlewares
+
+TODO
+
+### Adding Custom JS Entrypoints
+
+TODO
+
+### Routes and Middlewares - REWRITE!
 
 You can create routes and middlewares that get loaded and rendered like the
 normal [routes](/docs/concepts/routes) and
@@ -118,3 +159,8 @@ For more examples see the [Concepts: Routing](/docs/concepts/routing) page.
 To create a middleware you need to create a `MiddlewareHandler` function.
 
 And to create a route you can create both a Handler and/or component.
+
+<!-- Links-->
+
+[zod]: https://deno.land/x/zod
+[fresh-openprops-plugin-definition]: https://github.com/codemonument/deno_fresh_openprops/blob/main/src/fresh_openprops_plugin.ts

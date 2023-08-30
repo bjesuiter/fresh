@@ -56,6 +56,6 @@ server, like any other Deno module.
 - tailwind V0
 - tailwind v1
 
-<!-- Link Footer-->
+<!-- Links-->
 
 [creating-a-plugin]: /docs/canary/plugins/creating-a-plugin
