@@ -40,6 +40,11 @@ To take options for your plugin, do not create and export the
 returns the plugin object:
 
 ```ts
+// IMPORTANT: You need to use the raw fresh import here, instead of a importMap value,
+// bc. import maps will not be resolved when loading your plugin from deno.land/x
+// ./deps/fresh.ts contains: `export * from "https://deno.land/x/fresh@1.4.2/server.ts";`
+import { Plugin } from "./deps/fresh.ts";
+
 type YourPluginOptions = {
   option1: boolean;
   option2: string;
