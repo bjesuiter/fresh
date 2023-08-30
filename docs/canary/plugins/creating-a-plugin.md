@@ -63,7 +63,7 @@ export async function MyPlugin(options: YourPluginOptions) {
 
 > ℹ️ TIP: You could use [zod][zod] to validate the options passed to your plugin,
 > as well as setting defaults. You can go here to see an example:
-> [deno_fresh_openprops][fresh-openprops-plugin-definition]
+> [Skeleton Plugin with zod options][fresh-plugin-w-zod-options]
 
 ## Available Hooks
 
@@ -201,4 +201,4 @@ And to create a route you can create both a Handler and/or component.
 <!-- Links-->
 
 [zod]: https://deno.land/x/zod
-[fresh-openprops-plugin-definition]: https://github.com/codemonument/deno_fresh_openprops/blob/main/src/fresh_openprops_plugin.ts
+[fresh-plugin-w-zod-options]: https://github.com/codemonument/deno_fresh_plugin_skeleton/blob/main/src/01a_skeleton_plugin_w_zod.ts
