@@ -25,7 +25,7 @@ await start(manifest, {
 });
 ```
 
-## What Plugins do
+## What Plugins can do
 
 Plugins register some hooks which are provided by fresh core to attach
 functionality to your fresh app. For example, the first-party plugin "Twind"
