@@ -134,6 +134,39 @@ may be provided to Fresh's `start` entrypoint in the `main.ts` file.
 
 ### Adding Routes
 
+To add a route to your plugin provide one or more `PluginRoute` definitions to
+the `routes` property. Routes can be either component routes or plain handler
+routes which can be used to build api endpoints inside a plugin.
+
+```ts
+const myHandlerRoute = {
+  path: "/handler", // the plugin route will be attached to /handler in the host Fresh app.
+  handler: async (
+    req: Request,
+    ctx: HandlerContext,
+  ) => {
+    // Do some things in your handler and return a response
+    // This will be a GET handler 
+    // It can return the Response directly or as a promise (a.k.a be an 'async' function)
+    return new Response("Hello World", {
+        headers: new Headers([
+          ["Content-Type", "text/plain"]
+        ]),
+      }); 
+  },
+} satisfies PluginRoute; // this ensures that your route config matches the expected Fresh type
+
+const myRoute2 = {
+  path: "/component", // the plugin route will be attached to /component in the host Fresh app.
+  component: // a normal Fresh component
+} satisfies PluginRoute;
+
+return {
+  name: "openprops",
+  routes: [myRoute1, myRoute2],
+} satisfies Plugin;
+```
+
 TODO
 
 ### Adding Middlewares
