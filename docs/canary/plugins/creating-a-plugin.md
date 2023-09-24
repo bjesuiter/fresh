@@ -147,8 +147,8 @@ routes which can be used to build api endpoints inside a plugin.
 const myHandlerRoute = {
   path: "/handler", // the plugin route will be attached to /handler in the host Fresh app.
   handler: async (
-    req: Request,
-    ctx: HandlerContext,
+    _req: Request,  
+    _ctx: HandlerContext,
   ) => {
     // Do some things in your handler and return a response
     // This will be a GET handler 
